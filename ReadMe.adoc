@@ -1,0 +1,37 @@
+:Author: gortblast
+:Email: ccockrell@outlook.com
+:Date: 09/09/2018
+:Revision: version#
+:License: Public Domain
+
+= Project: Control LEDs using SMS
+
+Proof-of-concept project to control an LED via SMS.
+
+This was made to help me understand the principle
+of control via SMS. It is trivial to extend this
+code to control other output devices - an LCD
+display, a home-security project and so on.
+
+== Step 1: Installation
+
+1. Arduino UNO was used here.
+2. Attach the GPRS shield + activated SIM card.
+2. Set up breadboard with LED, 220ohm resistor, 
+   all connected to the output pin and GND.
+3. Send l-on / l-off / l-blink SMS to SIM number.
+
+=== License
+This project is released under a {License} License.
+
+=== Contributing
+To contribute to this project please contact gortblast <ccockrell@outlook.com>
+
+=== BOM
+
+|===
+| ID | Part name
+| R1 | 220 Resistor
+| L1 | Red LED
+| A1 | Arduino Uno
+|===
