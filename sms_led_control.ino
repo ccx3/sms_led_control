@@ -1,3 +1,4 @@
+#include "arduino_secrets.h"
 /****************
  * See README for details
  ****************/
@@ -21,7 +22,6 @@ char msg[MAX];
 
 // counter used to move through the input-buffer array
 int count = 0;
-
 
 void setup() {
   
@@ -86,8 +86,12 @@ void sendSMS(char message[])
 {
   SIM900.print("AT+CMGF=1\r");                                                        // AT command to send SMS message
   delay(100);
-  SIM900.println("AT + CMGS = \"+44XXXXXXXXXX\"");                                     // recipient's mobile number, in international format
+  
+  char phone_home[30];
+  sprintf(phone_home, "AT + CMGS = \"%s\"", SECRET_MOBILE);
+  SIM900.println(phone_home);
   delay(100);
+  
   SIM900.println(message);        // message to send
   delay(100);
   SIM900.println((char)26);                       // End AT command with a ^Z, ASCII code 26
