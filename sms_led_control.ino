@@ -16,8 +16,8 @@ const int DEBUG = 1;
 // Size of character buffer we will be using
 const int MAX = 64;
 
-// The input-buffer (byte is same as 'unsigned char')
-byte msg[MAX];
+// The input-buffer.
+char msg[MAX];
 
 // counter used to move through the input-buffer array
 int count = 0;
@@ -63,7 +63,7 @@ void clearMsg()
 void loop() {
 
   count = 0;
-  byte c;
+  char c;
   
   // read in SMS
   while(SIM900.available() > 0) {
@@ -82,12 +82,33 @@ void loop() {
   }
 }
 
+void sendSMS(char message[])
+{
+  SIM900.print("AT+CMGF=1\r");                                                        // AT command to send SMS message
+  delay(100);
+  SIM900.println("AT + CMGS = \"+44XXXXXXXXXX\"");                                     // recipient's mobile number, in international format
+  delay(100);
+  SIM900.println(message);        // message to send
+  delay(100);
+  SIM900.println((char)26);                       // End AT command with a ^Z, ASCII code 26
+  delay(100); 
+  SIM900.println();
+  // delay(5000);                                     // give module time to send SMS
+  // SIM900power();                                   // turn off module
+}
+
 // The effective function where 
 // we just obey orders.
 //
 // All easily-understood really.
 void do_response()
 {
+  if(strstr(msg, "l-sts"))
+  {
+    char statusMsg[15];
+    sprintf(statusMsg, "LED is %s", digitalRead(led) == LOW ? "OFF" : "ON");
+    sendSMS(statusMsg);
+  }
   if(strstr(msg, "l-on"))
   {
     digitalWrite(led, HIGH);
