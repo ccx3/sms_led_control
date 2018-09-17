@@ -9,55 +9,56 @@
 SoftwareSerial SIM900(7, 8);
 
 // The output pin
-int led = 4;
+#define L_LED 4
 
 // used to control debugging output to Serial monitor
-const int DEBUG = 1;
+// #define L_DEBUG
 
 // Size of character buffer we will be using
-const int MAX = 64;
+#define L_MAX 64
+
+// taken from very useful discussion (and last suggestion)
+// here https://stackoverflow.com/questions/9146395/reset-c-int-array-to-zero-the-fastest-way
+#define ARRAY_SIZE(a) (sizeof (a) / sizeof *(a))
+
+#define ZERO(a, n) do{\
+   size_t i_ = 0, n_ = (n);\
+   for (; i_ < n_; ++i_)\
+     (a)[i_] = 0;\
+} while (0)
+
+#define ZERO_A(a) ZERO((a), ARRAY_SIZE(a))
 
 // The input-buffer.
-char msg[MAX];
+char msg[L_MAX];
 
 // counter used to move through the input-buffer array
-int count = 0;
+byte count = 0;
 
 void setup() {
   
   // set pin 4 to output-mode
-  pinMode(led, OUTPUT);
+  pinMode(L_LED, OUTPUT);
   
   // initialise the input-buffer to NULLs
-  clearMsg();
+  clearBuffers();
   
   // Arduino communicates with SIM900 GSM shield at a baud rate of 19200
   // Make sure that corresponds to the baud rate of your module
   SIM900.begin(19200);
-  // For serial monitor
   Serial.begin(19200); 
   
   // Give GSM shield time to log on to network
-  delay(20000);
-  if(DEBUG) Serial.println("Ready to rock and roll!...");
+  delay(1000);
+  Serial.println("Ready!");
 
   // AT command to set SIM900 to SMS mode
   SIM900.print("AT+CMGF=1\r");
   delay(100);
   
-  // Set module to send SMS data to serial out upon receipt 
+  // Set module to send SMS data to serial out upon receipt
   SIM900.print("AT+CNMI=2,2,0,0,0\r");
   delay(100);
-}
-
-// re-set the input-buffer array and its counter
-void clearMsg()
-{
-  for(int i = 0; i < MAX; i++)
-  {
-    msg[i] = NULL;
-  }
-  count = 0;
 }
 
 void loop() {
@@ -68,13 +69,13 @@ void loop() {
   // read in SMS
   while(SIM900.available() > 0) {
     c = SIM900.read(); // character at a time
-    if(DEBUG) Serial.print(c);
-    
+    Serial.print(c);
+
     // character is lower-cased before adding to input-buffer
     msg[count++] = tolower(c);
     
     // stop reading at newline or full buffer
-    if(c == 13 || count >= MAX)
+    if(c == 13 || count >= L_MAX)
     {
       do_response(); // react to SMS
       break;
@@ -110,27 +111,35 @@ void do_response()
   if(strstr(msg, "l-sts"))
   {
     char statusMsg[15];
-    sprintf(statusMsg, "LED is %s", digitalRead(led) == LOW ? "OFF" : "ON");
+    sprintf(statusMsg, "LED is %s", digitalRead(L_LED) == LOW ? "OFF" : "ON");
     sendSMS(statusMsg);
   }
-  if(strstr(msg, "l-on"))
+  else if(strstr(msg, "l-on"))
   {
-    digitalWrite(led, HIGH);
+    digitalWrite(L_LED, HIGH);
   }
-  if(strstr(msg, "l-off"))
+  else if(strstr(msg, "l-off"))
   {
-    digitalWrite(led, LOW);
+    digitalWrite(L_LED, LOW);
   }
-  if(strstr(msg, "l-blink"))
+  else if(strstr(msg, "l-blink"))
   {
-    for(int i = 0; i<5; i++)
+    for(byte i = 0; i<5; i++)
     {
-      digitalWrite(led, HIGH);
+      digitalWrite(L_LED, HIGH);
       delay(500);
-      digitalWrite(led, LOW);
+      digitalWrite(L_LED, LOW);
       delay(500);
     }
   }
-  // initialise the input-buffer to NULLs
-  clearMsg();
+  clearBuffers();
+}
+
+void clearBuffers()
+{
+  // clear all buffers & counters
+  Serial.flush();
+  SIM900.flush();
+  ZERO_A(msg);
+  count = 0;
 }
