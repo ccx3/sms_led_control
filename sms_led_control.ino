@@ -12,7 +12,7 @@ SoftwareSerial SIM900(7, 8);
 #define L_LED 4
 
 // used to control debugging output to Serial monitor
-// #define L_DEBUG
+//#define L_DEBUG
 
 // Size of character buffer we will be using
 #define L_MAX 64
@@ -50,15 +50,15 @@ void setup() {
   
   // Give GSM shield time to log on to network
   delay(1000);
-  Serial.println("Ready!");
 
   // AT command to set SIM900 to SMS mode
   SIM900.print("AT+CMGF=1\r");
   delay(100);
   
+  // I have no idea what this does. It had no effect on the working program.
   // Set module to send SMS data to serial out upon receipt
-  SIM900.print("AT+CNMI=2,2,0,0,0\r");
-  delay(100);
+//  SIM900.print("AT+CNMI=2,2,0,0,0\r");
+//  delay(100);
 }
 
 void loop() {
@@ -69,7 +69,11 @@ void loop() {
   // read in SMS
   while(SIM900.available() > 0) {
     c = SIM900.read(); // character at a time
+#ifdef L_DEBUG
+    // print everything available.
+    // Everything - control-strings and message are shown
     Serial.print(c);
+#endif
 
     // character is lower-cased before adding to input-buffer
     msg[count++] = tolower(c);
@@ -98,8 +102,6 @@ void sendSMS(char message[])
   SIM900.println((char)26);                       // End AT command with a ^Z, ASCII code 26
   delay(100); 
   SIM900.println();
-  // delay(5000);                                     // give module time to send SMS
-  // SIM900power();                                   // turn off module
 }
 
 // The effective function where 
@@ -108,6 +110,13 @@ void sendSMS(char message[])
 // All easily-understood really.
 void do_response()
 {
+#ifndef L_DEBUG
+  // For some reason, the program does not work unless I print *something* 
+  // to the serial port upon receipt of a message.
+  // When not debugging, just send newline to serial port.
+  Serial.println("");
+#endif
+
   if(strstr(msg, "l-sts"))
   {
     char statusMsg[15];
