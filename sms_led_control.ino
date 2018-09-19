@@ -12,7 +12,7 @@ SoftwareSerial SIM900(7, 8);
 #define L_LED 4
 
 // used to control debugging output to Serial monitor
-//#define L_DEBUG
+#define L_DEBUG
 
 // Size of character buffer we will be using
 #define L_MAX 64
@@ -45,11 +45,12 @@ void setup() {
   
   // Arduino communicates with SIM900 GSM shield at a baud rate of 19200
   // Make sure that corresponds to the baud rate of your module
-  SIM900.begin(19200);
   Serial.begin(19200); 
+  SIM900.begin(19200);
   
   // Give GSM shield time to log on to network
-  delay(1000);
+  SIM900power();
+  delay(20000);
 
   // AT command to set SIM900 to SMS mode
   SIM900.print("AT+CMGF=1\r");
@@ -85,23 +86,6 @@ void loop() {
       break;
     }
   }
-}
-
-void sendSMS(char message[])
-{
-  SIM900.print("AT+CMGF=1\r");                                                        // AT command to send SMS message
-  delay(100);
-  
-  char phone_home[30];
-  sprintf(phone_home, "AT + CMGS = \"%s\"", SECRET_MOBILE);
-  SIM900.println(phone_home);
-  delay(100);
-  
-  SIM900.println(message);        // message to send
-  delay(100);
-  SIM900.println((char)26);                       // End AT command with a ^Z, ASCII code 26
-  delay(100); 
-  SIM900.println();
 }
 
 // The effective function where 
@@ -142,6 +126,32 @@ void do_response()
     }
   }
   clearBuffers();
+}
+
+void sendSMS(char message[])
+{
+  SIM900.print("AT+CMGF=1\r");                                                        // AT command to send SMS message
+  delay(100);
+  
+  char phone_home[30];
+  sprintf(phone_home, "AT + CMGS = \"%s\"", SECRET_MOBILE);
+  SIM900.println(phone_home);
+  delay(100);
+  
+  SIM900.println(message);        // message to send
+  delay(100);
+  SIM900.println((char)26);                       // End AT command with a ^Z, ASCII code 26
+  delay(100); 
+  SIM900.println();
+}
+
+void SIM900power()
+// software equivalent of pressing the GSM shield "power" button
+{
+  digitalWrite(9, HIGH);
+  delay(1000);
+  digitalWrite(9, LOW);
+  delay(5000);
 }
 
 void clearBuffers()
