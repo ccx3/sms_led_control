@@ -31,3 +31,5 @@ Bits used:
 Connect pin4 to resistor end #1, resistor end #2 to led long leg, 
 led short leg to GND. Job done.
 
+NOTE: This is only a DEMO PROJECT. For instance, there is no protection
+against misuse by 3rd parties who know the phone number of the SIM card.
