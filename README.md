@@ -23,6 +23,7 @@ Bits used:
 
 * Arduino Uno R3
 * Linksprite SIM900 GPRS/GSM shield (an old one given to me)
+* An activated SIM card (unlocked, or you will need to change the source-code).
 * 1 LED
 * 1 220ohm resistor
 * breadboard
@@ -36,6 +37,9 @@ power jack, to Ext. See [photo](./SIM900.jpg)
 NOTE #1: This is only a DEMO PROJECT. For instance, there is no protection
 against misuse by 3rd parties who know the phone number of the SIM card.
 
-NOTE #2: My editor uses a tabwith=4. Github seems to use 8. You can see the 
+NOTE #2: Sending an SMS messages to operate the LED will of course eat into your phone's allowance. Sending a status query and getting a reply will use 1 message from your phone's allowance, and 1 message from the allowance that the SIM in the 
+shield has.
+
+NOTE #3: My editor uses a tabwith=4. Github seems to use 8. You can see the 
 code as I do by appending ?ts=4 to the file URL.  i.e. 
 https://github.com/ccx3/sms_led_control/blob/master/sms_led_control.ino?ts=4
