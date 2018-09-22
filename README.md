@@ -28,11 +28,14 @@ Bits used:
 * breadboard
 * wires
 
-Connect pin4 to resistor end #1, resistor end #2 to led long leg, 
-led short leg to GND. Job done.
+Connect pin4 to resistor end #1, resistor end #2 to led long leg,
+led short leg to GND. Jumpers both on SWSerial, and I powered the shield from 
+an external supply and so moved the selector switch, next to the shield's 
+power jack, to Ext.
 
 NOTE #1: This is only a DEMO PROJECT. For instance, there is no protection
 against misuse by 3rd parties who know the phone number of the SIM card.
 
-NOTE #2: My editor uses a tabwith=4. Github seems to use 8. You can see the code as I do by appending ?ts=4 to the file URL.
-i.e. https://github.com/ccx3/sms_led_control/blob/master/sms_led_control.ino?ts=4
+NOTE #2: My editor uses a tabwith=4. Github seems to use 8. You can see the 
+code as I do by appending ?ts=4 to the file URL.  i.e. 
+https://github.com/ccx3/sms_led_control/blob/master/sms_led_control.ino?ts=4
