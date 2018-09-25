@@ -1,5 +1,4 @@
-#include "Arduino.h"
-
+#include <Arduino.h>
 #include <SoftwareSerial.h>
 
 // Configure software serial port
